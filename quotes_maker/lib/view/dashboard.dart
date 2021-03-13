@@ -8,51 +8,66 @@ class Dashboard extends StatelessWidget {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: Container(
-          height: size.height,
-          width: size.width,
-          color: Colors.white38,
-          child: Stack(
-            children: [
-              Container(
+      body: Stack(
+        children: [
+          BlocBuilder<QuoteCubit, QuoteState>(
+            builder: (context, state) {
+              return Container(
                 height: size.height,
                 width: size.width,
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      BlocBuilder<QuoteCubit, QuoteState>(
-                        builder: (context, state) {
-                          if (state is RefreshQuote) {
-                            return Text(
-                              state.quote.caption,
-                              style: TextStyle(
-                                fontSize: state.quote.textSize.toDouble(),
-                                fontWeight: (state.quote.isBold)
-                                    ? FontWeight.bold
-                                    : FontWeight.normal,
-                              ),
-                            );
-                          } else {
-                            return Text("");
-                          }
-                        },
-                      ),
-                      ElevatedButton(
-                          onPressed: () {
-                            context
-                                .read<QuoteCubit>()
-                                .changeCaption("Kapan kita jalan");
+                child: Image.network(
+                  (state is RefreshQuote) ? state.quote.url : "",
+                  fit: BoxFit.cover,
+                ),
+              );
+            },
+          ),
+          Container(
+            height: size.height,
+            width: size.width,
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  BlocBuilder<QuoteCubit, QuoteState>(
+                    builder: (context, state) {
+                      if (state is RefreshQuote) {
+                        return Text(
+                          state.quote.caption,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: state.quote.textSize.toDouble(),
+                            fontStyle: (state.quote.isItalic)
+                                ? FontStyle.italic
+                                : FontStyle.normal,
+                            fontWeight: (state.quote.isBold)
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                            color: Colors.yellow,
+                          ),
+                        );
+                      } else {
+                        return Text("");
+                      }
+                    },
+                  ),
+                  ElevatedButton(
+                      onPressed: () {
+                        context
+                            .read<QuoteCubit>()
+                            .changeCaption("Kapan kita jalan");
 
-                            context.read<QuoteCubit>().changeTextSize(40);
+                        context.read<QuoteCubit>().changeTextSize(40);
 
-                            context.read<QuoteCubit>().changeBoldProps(true);
-                          },
-                          child: Text("Update")),
-                    ]),
-              )
-            ],
-          )),
+                        context.read<QuoteCubit>().changeBoldProps(true);
+
+                        context.read<QuoteCubit>().changeItalicProps(true);
+                      },
+                      child: Text("Update")),
+                ]),
+          )
+        ],
+      ),
     );
   }
 }
