@@ -6,6 +6,7 @@ class QuoteModel {
   late bool isItalic;
   late bool isGrayscale;
   late bool isBlur;
+  late String image_author;
 
   QuoteModel({
     required this.url,
@@ -15,5 +16,6 @@ class QuoteModel {
     required this.isItalic,
     required this.isGrayscale,
     required this.isBlur,
+    required this.image_author,
   });
 }

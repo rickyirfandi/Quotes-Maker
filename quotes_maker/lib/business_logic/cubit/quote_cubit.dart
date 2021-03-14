@@ -4,6 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:quotes_maker/model/quote_model.dart';
 
+import 'dart:convert' as convert;
+import 'package:http/http.dart' as http;
+
 part 'quote_state.dart';
 
 class QuoteCubit extends Cubit<QuoteState> {
@@ -11,6 +14,7 @@ class QuoteCubit extends Cubit<QuoteState> {
 
   late QuoteModel quotes;
   late int image_id;
+  late String image_author;
 
   QuoteCubit() : super(QuoteInitial());
 
@@ -32,20 +36,40 @@ class QuoteCubit extends Cubit<QuoteState> {
     return "https://picsum.photos/id/${image_id}/1080/1920";
   }
 
-  String initImageUrl() {
-    image_id = _random.nextInt(1000);
+  Future<String> initImageUrl() async {
+    bool isValid = false;
+
+    while (!isValid) {
+      image_id = _random.nextInt(1000);
+      isValid = await verifyImage(image_id);
+    }
     return "https://picsum.photos/id/${image_id}/1080/2000?grayscale&blur=5";
   }
 
-  void init() {
+  Future<bool> verifyImage(int id) async {
+    var response = await http.get(Uri.https('picsum.photos', '/id/$id/info'));
+
+    if (response.statusCode == 200) {
+      var jsonResponse = convert.jsonDecode(response.body);
+      var author = jsonResponse['author'];
+      print('Author : $author.');
+      this.image_author = author;
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  void init() async {
     this.quotes = new QuoteModel(
-      url: initImageUrl(),
+      url: await initImageUrl(),
       caption: "Indahnya dunia ini hanyalah background semata :)",
       textSize: 14,
       isBold: false,
       isItalic: false,
       isGrayscale: true,
       isBlur: true,
+      image_author: image_author,
     );
 
     emit(RefreshQuote(this.quotes));
