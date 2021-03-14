@@ -22,11 +22,11 @@ class QuoteCubit extends Cubit<QuoteState> {
     image_id = _random.nextInt(1000);
 
     if (quotes.isBlur && quotes.isGrayscale) {
-      return "https://picsum.photos/id/${image_id}/1080/1920?grayscale&blur=5";
+      return "https://picsum.photos/id/${image_id}/1080/1920?grayscale&blur=7";
     }
 
     if (quotes.isBlur) {
-      return "https://picsum.photos/id/${image_id}/1080/1920?blur=5";
+      return "https://picsum.photos/id/${image_id}/1080/1920?blur=7";
     }
 
     if (quotes.isGrayscale) {
@@ -96,6 +96,13 @@ class QuoteCubit extends Cubit<QuoteState> {
   void changeItalicProps(bool newValue) {
     this.quotes.isItalic = newValue;
 
+    emit(RefreshQuote(this.quotes));
+  }
+
+  void changeBackground() async {
+    emit(QuoteInitial());
+    this.quotes.url = await initImageUrl();
+    this.quotes.image_author = this.image_author;
     emit(RefreshQuote(this.quotes));
   }
 }

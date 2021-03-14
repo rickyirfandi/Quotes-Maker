@@ -30,6 +30,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_bloc: ^7.0.0-nullsafety.5
   http: ^0.13.0
+  list_tile_switch: ^1.0.0
 
 dev_dependencies:
   flutter_test:
