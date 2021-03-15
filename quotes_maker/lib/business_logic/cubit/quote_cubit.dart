@@ -22,18 +22,45 @@ class QuoteCubit extends Cubit<QuoteState> {
     image_id = _random.nextInt(1000);
 
     if (quotes.isBlur && quotes.isGrayscale) {
-      return "https://picsum.photos/id/${image_id}/1080/1920?grayscale&blur=7";
+      return "https://picsum.photos/id/${image_id}/720/1280?grayscale&blur=7";
     }
 
     if (quotes.isBlur) {
-      return "https://picsum.photos/id/${image_id}/1080/1920?blur=7";
+      return "https://picsum.photos/id/${image_id}/720/1280?blur=7";
     }
 
     if (quotes.isGrayscale) {
-      return "https://picsum.photos/id/${image_id}/1080/1920?grayscale";
+      return "https://picsum.photos/id/${image_id}/720/1280?grayscale";
     }
 
-    return "https://picsum.photos/id/${image_id}/1080/1920";
+    return "https://picsum.photos/id/${image_id}/720/1280";
+  }
+
+  void reloadImageUrl() {
+    if (quotes.isBlur && quotes.isGrayscale) {
+      print("blur and gray");
+      quotes.url =
+          "https://picsum.photos/id/${image_id}/720/1280?grayscale&blur=7";
+      return;
+    }
+
+    if (quotes.isBlur) {
+      print("blur only");
+      quotes.url = "https://picsum.photos/id/${image_id}/720/1280?blur=7";
+      return;
+    }
+
+    if (quotes.isGrayscale) {
+      print("bw only");
+      quotes.url = "https://picsum.photos/id/${image_id}/720/1280?grayscale";
+      return;
+    }
+
+    if (!quotes.isBlur && !quotes.isGrayscale) {
+      print("no blur and gray");
+      quotes.url = "https://picsum.photos/id/${image_id}/720/1280";
+      return;
+    }
   }
 
   Future<String> initImageUrl() async {
@@ -43,7 +70,7 @@ class QuoteCubit extends Cubit<QuoteState> {
       image_id = _random.nextInt(1000);
       isValid = await verifyImage(image_id);
     }
-    return "https://picsum.photos/id/${image_id}/1080/2000?grayscale&blur=5";
+    return "https://picsum.photos/id/${image_id}/720/1280?grayscale&blur=5";
   }
 
   Future<bool> verifyImage(int id) async {
@@ -69,6 +96,7 @@ class QuoteCubit extends Cubit<QuoteState> {
       isItalic: false,
       isGrayscale: true,
       isBlur: true,
+      isCredit: true,
       image_author: image_author,
     );
 
@@ -99,10 +127,34 @@ class QuoteCubit extends Cubit<QuoteState> {
     emit(RefreshQuote(this.quotes));
   }
 
+  void changeIsCreditProps(bool newValue) {
+    this.quotes.isCredit = newValue;
+
+    emit(RefreshQuote(this.quotes));
+  }
+
   void changeBackground() async {
+    this.quotes.isBlur = true;
+    this.quotes.isGrayscale = true;
     emit(QuoteInitial());
     this.quotes.url = await initImageUrl();
     this.quotes.image_author = this.image_author;
+    emit(RefreshQuote(this.quotes));
+  }
+
+  void updateBlackWhiteBackground(bool newValue) async {
+    this.quotes.isGrayscale = newValue;
+    reloadImageUrl();
+    await verifyImage(image_id);
+    this.quotes.image_author = image_author;
+    emit(RefreshQuote(this.quotes));
+  }
+
+  void updateBlurBackground(bool newValue) async {
+    this.quotes.isBlur = newValue;
+    reloadImageUrl();
+    await verifyImage(image_id);
+    this.quotes.image_author = image_author;
     emit(RefreshQuote(this.quotes));
   }
 }
