@@ -13,8 +13,10 @@ buildscript {
 
 allprojects {
     repositories {
+        maven { url "http://download.flutter.io" }
+        maven { url "https://storage.googleapis.com/download.flutter.io" }
         google()
-        jcenter()
+        jcenter { url "http://jcenter.bintray.com/"}
     }
 }
 

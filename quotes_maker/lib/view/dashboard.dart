@@ -1,10 +1,18 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:quotes_maker/business_logic/cubit/quote_cubit.dart';
 import 'package:list_tile_switch/list_tile_switch.dart';
-import 'package:quotes_maker/view/control.dart';
+import 'package:screenshot/screenshot.dart';
+import 'package:share_plus/share_plus.dart';
 
 class Dashboard extends StatelessWidget {
+  //Create an instance of ScreenshotController
+  ScreenshotController screenshotController = ScreenshotController();
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -98,7 +106,7 @@ class Dashboard extends StatelessWidget {
                                                       value: fontSize,
                                                       min: 10,
                                                       max: 50,
-                                                      divisions: 10,
+                                                      divisions: 20,
                                                       label: "$fontSize",
                                                       onChanged: (size) {
                                                         cubit.changeTextSize(
@@ -355,7 +363,7 @@ class Dashboard extends StatelessWidget {
                                                       value: footerSize,
                                                       min: 10,
                                                       max: 50,
-                                                      divisions: 10,
+                                                      divisions: 20,
                                                       label: "$footerSize",
                                                       onChanged: (size) {
                                                         cubit.changeFooterSize(
@@ -408,79 +416,135 @@ class Dashboard extends StatelessWidget {
                           ),
                         ),
                       ),
+                      Divider(
+                        thickness: 1,
+                      ),
+                      Container(
+                        height: 60,
+                        width: MediaQuery.of(context).size.width,
+                        child: TextButton(
+                          onPressed: () {
+                            screenshotController
+                                .capture(delay: Duration(milliseconds: 100))
+                                .then((Uint8List? image) async {
+                              // _imageFile = image;
+                              if (image != null) {
+                                final directory = (await getApplicationDocumentsDirectory()).path;
+                                File imgFile =new File('$directory/MyQuoutes.png');
+                                imgFile.writeAsBytes(image);
+//                                final images = await File('image.png').create();
+//                                await images.writeAsBytes(image);
+                                // File('share.jpg').writeAsBytes(image);
+                                 Share.shareFiles(['$directory/MyQuoutes.png'],
+                                     text: 'Hey, Check out my quotes');
+
+//                                 showDialog(
+//                                   context: context,
+//                                   builder: (context) => Scaffold(
+//                                     appBar: AppBar(
+//                                       title: Text("CAPURED SCREENSHOT"),
+//                                     ),
+//                                     body: Center(
+//                                         child: Column(
+//                                       children: [
+//                                         Image.memory(image),
+//                                       ],
+//                                     )),
+//                                   ),
+//                                 );
+                              }
+                            }).catchError((onError) {
+                              print(onError);
+                            });
+                          },
+                          child: ListTile(
+                            leading: new Icon(Icons.save_alt_outlined,
+                                size: 26, color: Colors.blue),
+                            title: new Text("Share",
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.blue)),
+                          ),
+                        ),
+                      ),
                     ],
                   );
                 });
               });
         },
-        child: Stack(
-          children: [
-            BlocBuilder<QuoteCubit, QuoteState>(
-              builder: (context, state) {
-                return Container(
-                  height: size.height,
-                  width: size.width,
-                  child: (state is RefreshQuote)
-                      ? Image.network(
-                          state.quote.url,
-                          fit: BoxFit.cover,
-                        )
-                      : Center(child: CircularProgressIndicator()),
-                );
-              },
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 15),
-              height: size.height,
-              width: size.width,
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    BlocBuilder<QuoteCubit, QuoteState>(
-                      builder: (context, state) {
-                        if (state is RefreshQuote) {
-                          return Expanded(
-                            child: Center(
-                              child: Text(
-                                state.quote.caption,
-                                textAlign: TextAlign.center,
-                                // overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  shadows: <Shadow>[
-                                    (state.quote.isShadow)
-                                        ? Shadow(
-                                            offset: Offset(5.0, 2.0),
-                                            blurRadius: 7.0,
-                                            color: Color.fromARGB(150, 0, 0, 0),
-                                          )
-                                        : Shadow(
-                                            offset: Offset(0.0, 0.0),
-                                            blurRadius: 0.0,
-                                            color: Color.fromARGB(0, 0, 0, 0),
-                                          ),
-                                  ],
-                                  fontSize: state.quote.textSize.toDouble(),
-                                  fontStyle: (state.quote.isItalic)
-                                      ? FontStyle.italic
-                                      : FontStyle.normal,
-                                  fontWeight: (state.quote.isBold)
-                                      ? FontWeight.bold
-                                      : FontWeight.normal,
-                                  color: Colors.yellow,
+        child: Screenshot(
+          controller: screenshotController,
+          child: Stack(
+            children: [
+              BlocBuilder<QuoteCubit, QuoteState>(
+                builder: (context, state) {
+                  return Container(
+                    height: size.height,
+                    width: size.width,
+                    child: (state is RefreshQuote)
+                        ? Image.network(
+                            state.quote.url,
+                            fit: BoxFit.cover,
+                          )
+                        : Center(child: CircularProgressIndicator()),
+                  );
+                },
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 15),
+                height: size.height,
+                width: size.width,
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      BlocBuilder<QuoteCubit, QuoteState>(
+                        builder: (context, state) {
+                          if (state is RefreshQuote) {
+                            return Expanded(
+                              child: Center(
+                                child: Text(
+                                  state.quote.caption,
+                                  textAlign: TextAlign.center,
+                                  // overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    shadows: <Shadow>[
+                                      (state.quote.isShadow)
+                                          ? Shadow(
+                                              offset: Offset(5.0, 2.0),
+                                              blurRadius: 7.0,
+                                              color:
+                                                  Color.fromARGB(150, 0, 0, 0),
+                                            )
+                                          : Shadow(
+                                              offset: Offset(0.0, 0.0),
+                                              blurRadius: 0.0,
+                                              color: Color.fromARGB(0, 0, 0, 0),
+                                            ),
+                                    ],
+                                    fontSize: state.quote.textSize.toDouble(),
+                                    fontStyle: (state.quote.isItalic)
+                                        ? FontStyle.italic
+                                        : FontStyle.normal,
+                                    fontWeight: (state.quote.isBold)
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                    color: Colors.yellow,
+                                  ),
                                 ),
                               ),
-                            ),
-                          );
-                        } else {
-                          return Text("");
-                        }
-                      },
-                    ),
-                  ]),
-            ),
-            credits(),
-          ],
+                            );
+                          } else {
+                            return Text("");
+                          }
+                        },
+                      ),
+                    ]),
+              ),
+              credits(),
+            ],
+          ),
         ),
       ),
     );
