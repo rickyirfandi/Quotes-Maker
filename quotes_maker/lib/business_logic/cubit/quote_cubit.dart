@@ -91,11 +91,12 @@ class QuoteCubit extends Cubit<QuoteState> {
     this.quotes = new QuoteModel(
       url: await initImageUrl(),
       caption: "Indahnya dunia ini hanyalah background semata :)",
-      textSize: 14,
+      textSize: 22,
       isBold: false,
       isItalic: false,
       isGrayscale: true,
       isBlur: true,
+      isShadow: true,
       isCredit: true,
       image_author: image_author,
     );
@@ -123,6 +124,12 @@ class QuoteCubit extends Cubit<QuoteState> {
 
   void changeItalicProps(bool newValue) {
     this.quotes.isItalic = newValue;
+
+    emit(RefreshQuote(this.quotes));
+  }
+
+  void changeShadowProps(bool newValue) {
+    this.quotes.isShadow = newValue;
 
     emit(RefreshQuote(this.quotes));
   }

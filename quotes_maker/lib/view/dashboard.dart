@@ -13,6 +13,10 @@ class Dashboard extends StatelessWidget {
     bool isCredit = true;
     bool isBW = true;
     bool isBlur = true;
+    bool isItalic = true;
+    bool isShadow = true;
+    double fontSize = 22;
+    TextEditingController caps = new TextEditingController();
 
     return Scaffold(
       body: GestureDetector(
@@ -28,7 +32,165 @@ class Dashboard extends StatelessWidget {
                         width: size.width,
                         margin: EdgeInsets.only(bottom: 5),
                         child: TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pop(context);
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return StatefulBuilder(
+                                      builder: (context, setState) {
+                                    return AlertDialog(
+                                      actions: <Widget>[
+                                        Container(
+                                          padding:
+                                              EdgeInsets.symmetric(vertical: 5),
+                                          height: 80,
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          child: TextField(
+                                            controller: caps,
+                                            onChanged: (text) {
+                                              cubit.changeCaption(text);
+                                            },
+                                            decoration: InputDecoration(
+                                              labelStyle:
+                                                  TextStyle(color: Colors.blue),
+                                              focusColor: Colors.blue,
+                                              filled: true,
+                                              enabledBorder:
+                                                  UnderlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                borderSide: BorderSide.none,
+                                              ),
+                                              focusedBorder: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                borderSide: BorderSide(
+                                                    color: Colors.blue),
+                                              ),
+                                              labelText: "Your Quotes:)",
+                                            ),
+                                          ),
+                                        ),
+                                        Divider(
+                                          thickness: 1,
+                                        ),
+                                        Container(
+                                            height: 60,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            child: Column(
+                                              children: [
+                                                Text('Text Size',
+                                                    style: TextStyle(
+                                                      color: Colors.blue,
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                    )),
+                                                Expanded(
+                                                  child: Slider(
+                                                      value: fontSize,
+                                                      min: 10,
+                                                      max: 50,
+                                                      divisions: 10,
+                                                      label: "$fontSize",
+                                                      onChanged: (size) {
+                                                        cubit.changeTextSize(
+                                                            size.toInt());
+                                                        fontSize = size;
+                                                        setState(() {});
+                                                      }),
+                                                ),
+                                              ],
+                                            )),
+                                        Divider(
+                                          thickness: 1,
+                                        ),
+                                        Container(
+                                          height: 60,
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          child: ListTileSwitch(
+                                            value: isBold,
+                                            leading: Icon(Icons.format_bold,
+                                                color: Colors.blue),
+                                            onChanged: (value) {
+                                              isBold = value;
+                                              cubit.changeBoldProps(value);
+                                              setState(() {});
+                                            },
+                                            visualDensity:
+                                                VisualDensity.comfortable,
+                                            switchType: SwitchType.cupertino,
+                                            switchActiveColor: Colors.indigo,
+                                            title: Text('Bold Text',
+                                                style: TextStyle(
+                                                  color: Colors.blue,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w700,
+                                                )),
+                                          ),
+                                        ),
+                                        Container(
+                                          height: 60,
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          child: ListTileSwitch(
+                                            value: isItalic,
+                                            leading: Icon(Icons.format_italic,
+                                                color: Colors.blue),
+                                            onChanged: (value) {
+                                              isItalic = value;
+                                              cubit.changeItalicProps(value);
+                                              setState(() {});
+                                            },
+                                            visualDensity:
+                                                VisualDensity.comfortable,
+                                            switchType: SwitchType.cupertino,
+                                            switchActiveColor: Colors.indigo,
+                                            title: Text('Italic Text',
+                                                style: TextStyle(
+                                                  color: Colors.blue,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w700,
+                                                )),
+                                          ),
+                                        ),
+                                        Container(
+                                          height: 60,
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          child: ListTileSwitch(
+                                            value: isShadow,
+                                            leading: Icon(
+                                                Icons
+                                                    .supervised_user_circle_rounded,
+                                                color: Colors.blue),
+                                            onChanged: (value) {
+                                              isShadow = value;
+                                              cubit.changeShadowProps(value);
+                                              setState(() {});
+                                            },
+                                            visualDensity:
+                                                VisualDensity.comfortable,
+                                            switchType: SwitchType.cupertino,
+                                            switchActiveColor: Colors.indigo,
+                                            title: Text('Text Shadow',
+                                                style: TextStyle(
+                                                  color: Colors.blue,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w700,
+                                                )),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  });
+                                });
+                          },
                           child: ListTile(
                             leading: new Icon(Icons.text_fields,
                                 size: 26, color: Colors.blue),
@@ -207,25 +369,36 @@ class Dashboard extends StatelessWidget {
                     BlocBuilder<QuoteCubit, QuoteState>(
                       builder: (context, state) {
                         if (state is RefreshQuote) {
-                          return Text(
-                            state.quote.caption,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              shadows: <Shadow>[
-                                Shadow(
-                                  offset: Offset(5.0, 2.0),
-                                  blurRadius: 7.0,
-                                  color: Color.fromARGB(150, 0, 0, 0),
+                          return Expanded(
+                            child: Center(
+                              child: Text(
+                                state.quote.caption,
+                                textAlign: TextAlign.center,
+                                // overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  shadows: <Shadow>[
+                                    (state.quote.isShadow)
+                                        ? Shadow(
+                                            offset: Offset(5.0, 2.0),
+                                            blurRadius: 7.0,
+                                            color: Color.fromARGB(150, 0, 0, 0),
+                                          )
+                                        : Shadow(
+                                            offset: Offset(0.0, 0.0),
+                                            blurRadius: 0.0,
+                                            color: Color.fromARGB(0, 0, 0, 0),
+                                          ),
+                                  ],
+                                  fontSize: state.quote.textSize.toDouble(),
+                                  fontStyle: (state.quote.isItalic)
+                                      ? FontStyle.italic
+                                      : FontStyle.normal,
+                                  fontWeight: (state.quote.isBold)
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                  color: Colors.yellow,
                                 ),
-                              ],
-                              fontSize: state.quote.textSize.toDouble(),
-                              fontStyle: (state.quote.isItalic)
-                                  ? FontStyle.italic
-                                  : FontStyle.normal,
-                              fontWeight: (state.quote.isBold)
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
-                              color: Colors.yellow,
+                              ),
                             ),
                           );
                         } else {
@@ -233,18 +406,6 @@ class Dashboard extends StatelessWidget {
                         }
                       },
                     ),
-                    ElevatedButton(
-                        onPressed: () {
-                          cubit.changeCaption(
-                              "Aku sayang kamu tapi kamu sayang sama yang lain");
-
-                          cubit.changeTextSize(24);
-
-                          cubit.changeBoldProps(true);
-
-                          cubit.changeItalicProps(true);
-                        },
-                        child: Text("Update")),
                   ]),
             ),
             credits(),
