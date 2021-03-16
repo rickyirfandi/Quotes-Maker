@@ -18,6 +18,9 @@ class Dashboard extends StatelessWidget {
     double fontSize = 22;
     TextEditingController caps = new TextEditingController();
 
+    double footerSize = 16;
+    TextEditingController footer = new TextEditingController();
+
     return Scaffold(
       body: GestureDetector(
         onTap: () {
@@ -287,7 +290,7 @@ class Dashboard extends StatelessWidget {
                                                 VisualDensity.comfortable,
                                             switchType: SwitchType.cupertino,
                                             switchActiveColor: Colors.indigo,
-                                            title: Text('Photo Credits',
+                                            title: Text('Photo Footer',
                                                 style: TextStyle(
                                                   color: Colors.blue,
                                                   fontSize: 16,
@@ -295,6 +298,74 @@ class Dashboard extends StatelessWidget {
                                                 )),
                                           ),
                                         ),
+                                        Divider(
+                                          thickness: 1,
+                                        ),
+                                        Container(
+                                          padding:
+                                              EdgeInsets.symmetric(vertical: 5),
+                                          height: 80,
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          child: TextField(
+                                            controller: footer,
+                                            onChanged: (text) {
+                                              cubit.changeFooter(text);
+                                            },
+                                            decoration: InputDecoration(
+                                              labelStyle:
+                                                  TextStyle(color: Colors.blue),
+                                              focusColor: Colors.blue,
+                                              filled: true,
+                                              enabledBorder:
+                                                  UnderlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                borderSide: BorderSide.none,
+                                              ),
+                                              focusedBorder: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                borderSide: BorderSide(
+                                                    color: Colors.blue),
+                                              ),
+                                              labelText: "Custom Footer",
+                                            ),
+                                          ),
+                                        ),
+                                        Divider(
+                                          thickness: 1,
+                                        ),
+                                        Container(
+                                            height: 60,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            child: Column(
+                                              children: [
+                                                Text('Footer Size',
+                                                    style: TextStyle(
+                                                      color: Colors.blue,
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                    )),
+                                                Expanded(
+                                                  child: Slider(
+                                                      value: footerSize,
+                                                      min: 10,
+                                                      max: 50,
+                                                      divisions: 10,
+                                                      label: "$footerSize",
+                                                      onChanged: (size) {
+                                                        cubit.changeFooterSize(
+                                                            size.toInt());
+                                                        footerSize = size;
+                                                        setState(() {});
+                                                      }),
+                                                ),
+                                              ],
+                                            )),
                                       ],
                                     );
                                   });
@@ -425,8 +496,10 @@ class Dashboard extends StatelessWidget {
               builder: (context, state) {
                 if (state is RefreshQuote) {
                   if (state.quote.isCredit) {
-                    return Text("Photo: ${state.quote.image_author}",
+                    return Text(state.quote.image_author,
+                        textAlign: TextAlign.center,
                         style: TextStyle(
+                          fontSize: state.quote.footerSize.toDouble(),
                           shadows: <Shadow>[
                             Shadow(
                               offset: Offset(5.0, 2.0),

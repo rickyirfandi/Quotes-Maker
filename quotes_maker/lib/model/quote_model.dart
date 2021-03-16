@@ -2,6 +2,7 @@ class QuoteModel {
   late String caption;
   late String url;
   late int textSize;
+  late int footerSize;
   late bool isBold;
   late bool isItalic;
   late bool isGrayscale;
@@ -14,6 +15,7 @@ class QuoteModel {
     required this.url,
     required this.caption,
     required this.textSize,
+    required this.footerSize,
     required this.isBold,
     required this.isItalic,
     required this.isGrayscale,

@@ -80,7 +80,7 @@ class QuoteCubit extends Cubit<QuoteState> {
       var jsonResponse = convert.jsonDecode(response.body);
       var author = jsonResponse['author'];
       print('Author : $author.');
-      this.image_author = author;
+      this.image_author = "Photo: " + author;
       return true;
     } else {
       return false;
@@ -92,8 +92,9 @@ class QuoteCubit extends Cubit<QuoteState> {
       url: await initImageUrl(),
       caption: "Indahnya dunia ini hanyalah background semata :)",
       textSize: 22,
-      isBold: false,
-      isItalic: false,
+      footerSize: 16,
+      isBold: true,
+      isItalic: true,
       isGrayscale: true,
       isBlur: true,
       isShadow: true,
@@ -110,8 +111,21 @@ class QuoteCubit extends Cubit<QuoteState> {
     emit(RefreshQuote(this.quotes));
   }
 
+  void changeFooter(String newCaption) {
+    image_author = newCaption;
+    this.quotes.image_author = newCaption;
+
+    emit(RefreshQuote(this.quotes));
+  }
+
   void changeTextSize(int newSize) {
     this.quotes.textSize = newSize;
+
+    emit(RefreshQuote(this.quotes));
+  }
+
+  void changeFooterSize(int newSize) {
+    this.quotes.footerSize = newSize;
 
     emit(RefreshQuote(this.quotes));
   }
