@@ -177,8 +177,7 @@ class Dashboard extends StatelessWidget {
                                           child: ListTileSwitch(
                                             value: isShadow,
                                             leading: Icon(
-                                                Icons
-                                                    .supervised_user_circle_rounded,
+                                                Icons.format_paint_outlined,
                                                 color: Colors.blue),
                                             onChanged: (value) {
                                               isShadow = value;
@@ -310,6 +309,32 @@ class Dashboard extends StatelessWidget {
                                           thickness: 1,
                                         ),
                                         Container(
+                                          height: 60,
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          child: TextButton(
+                                            onPressed: () {
+                                              isBW = true;
+                                              isBlur = true;
+                                              cubit.changeBackground();
+                                              Navigator.pop(context);
+                                            },
+                                            child: ListTile(
+                                              leading: new Icon(Icons.refresh,
+                                                  size: 26, color: Colors.blue),
+                                              title: new Text("Change Image",
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      color: Colors.blue)),
+                                            ),
+                                          ),
+                                        ),
+                                        Divider(
+                                          thickness: 1,
+                                        ),
+                                        Container(
                                           padding:
                                               EdgeInsets.symmetric(vertical: 5),
                                           height: 80,
@@ -400,15 +425,68 @@ class Dashboard extends StatelessWidget {
                         width: MediaQuery.of(context).size.width,
                         child: TextButton(
                           onPressed: () {
-                            isBW = true;
-                            isBlur = true;
-                            cubit.changeBackground();
                             Navigator.pop(context);
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return StatefulBuilder(
+                                      builder: (context, setState) {
+                                    return AlertDialog(
+                                      actions: <Widget>[
+                                        Container(
+                                          padding: EdgeInsets.all(15),
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          child: Column(children: [
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(100.0),
+                                              child: SizedBox(
+                                                height: 125,
+                                                width: 125,
+                                                child: Image.network(
+                                                  "https://rickyirfandi.com/profil.jpg",
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(height: 20),
+                                            Divider(
+                                              thickness: 1,
+                                            ),
+                                            Text("Ricky Irfandi",
+                                                style: TextStyle(
+                                                  fontSize: 26,
+                                                  fontWeight: FontWeight.w700,
+                                                  fontStyle: FontStyle.italic,
+                                                )),
+                                            Text("rickyirfandi@gmail.com",
+                                                style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.w600,
+                                                  fontStyle: FontStyle.italic,
+                                                )),
+                                            Divider(
+                                              thickness: 1,
+                                            ),
+                                            SizedBox(height: 20),
+                                            Text(
+                                                "Hello, my name is Ricky Irfandi, I love creating apps that can help people. I hope this apps can be useful. And if you want to contact me or just say hi, feel free to sent me an email.",
+                                                style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.w400,
+                                                  fontStyle: FontStyle.italic,
+                                                ))
+                                          ]),
+                                        ),
+                                      ],
+                                    );
+                                  });
+                                });
                           },
                           child: ListTile(
-                            leading: new Icon(Icons.refresh,
+                            leading: new Icon(Icons.person,
                                 size: 26, color: Colors.blue),
-                            title: new Text("Change Image",
+                            title: new Text("About",
                                 style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w700,
@@ -429,36 +507,24 @@ class Dashboard extends StatelessWidget {
                                 .then((Uint8List? image) async {
                               // _imageFile = image;
                               if (image != null) {
-                                final directory = (await getApplicationDocumentsDirectory()).path;
-                                File imgFile =new File('$directory/MyQuoutes.png');
+                                final directory =
+                                    (await getApplicationDocumentsDirectory())
+                                        .path;
+                                File imgFile =
+                                    new File('$directory/MyQuoutes.png');
                                 imgFile.writeAsBytes(image);
 //                                final images = await File('image.png').create();
 //                                await images.writeAsBytes(image);
                                 // File('share.jpg').writeAsBytes(image);
-                                 Share.shareFiles(['$directory/MyQuoutes.png'],
-                                     text: 'Hey, Check out my quotes');
-
-//                                 showDialog(
-//                                   context: context,
-//                                   builder: (context) => Scaffold(
-//                                     appBar: AppBar(
-//                                       title: Text("CAPURED SCREENSHOT"),
-//                                     ),
-//                                     body: Center(
-//                                         child: Column(
-//                                       children: [
-//                                         Image.memory(image),
-//                                       ],
-//                                     )),
-//                                   ),
-//                                 );
+                                Share.shareFiles(['$directory/MyQuoutes.png'],
+                                    text: 'Hey, Check out my quotes');
                               }
                             }).catchError((onError) {
                               print(onError);
                             });
                           },
                           child: ListTile(
-                            leading: new Icon(Icons.save_alt_outlined,
+                            leading: new Icon(Icons.share_rounded,
                                 size: 26, color: Colors.blue),
                             title: new Text("Share",
                                 style: TextStyle(

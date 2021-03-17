@@ -90,7 +90,7 @@ class QuoteCubit extends Cubit<QuoteState> {
   void init() async {
     this.quotes = new QuoteModel(
       url: await initImageUrl(),
-      caption: "Indahnya dunia ini hanyalah background semata :)",
+      caption: "Your inspiring quotes belong here :)",
       textSize: 22,
       footerSize: 16,
       isBold: true,
