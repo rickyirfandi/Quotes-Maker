@@ -4,15 +4,17 @@ Quotes maker is a simple app that help you create quotes image and share with an
   <p align="center">
   <img src="Screenshot/title.png">
   </p>
-
+<tr>
 <p align="center">
-  <img src="Screenshot/ss1.png" width="288" height="576">
+  <img src="Screenshot/ss1.jpg" width="288" height="576">
   </p>
   <p align="center">
-  <img src="Screenshot/ss2.png" width="288" height="576">
+  <img src="Screenshot/ss2.jpg" width="288" height="576">
   </p><p align="center">
-  <img src="Screenshot/ss3.png" width="288" height="576">
+  <img src="Screenshot/ss3.jpg" width="288" height="576">
   </p>
+  </tr>
+  
 Feel free to use and contribute to this app.
 
 ## License
